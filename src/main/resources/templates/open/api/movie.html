@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>movie</title>
+    <script th:src="@{/js/open/api/movie.js}" defer></script>
+</head>
+<body>
+<div class="movie">
+    <div class="movie-con">
+        <div class="left">
+            <h1>영화진흥회 API</h1>
+            <div class="menu">
+                <ul>
+                    <li class="scene-list active"><a th:href="@{/api/open/movie}" style="background-color:inherit; color: inherit; text-decoration: none;">영화목록조회</a></li>
+                    <li class="boxOffice" onclick="boxOfficeFn()">박스오피스</li>
+                    <li>영화사 목록조회</li>
+                    <li>영화인 목록조회</li>
+                    <li>추가내용</li>
+                </ul>
+            </div>
+        </div>
+        <table class="t-table">
+            <thead>
+            <tr>
+                <th>제목</th>
+                <th>개봉일</th>
+                <th>장르</th>
+                <th>국적</th>
+                <th>상태</th>
+                <th>영화코드</th>
+                <th>보기</th>
+            </tr>
+            </thead>
+            <tbody class="scene-content">
+
+            </tbody>
+
+            <tfoot>
+            <tr>
+                <td colspan="7">
+                    <div class="pagination"></div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+        <div class="movie-detail-modal">
+            <div class="movie-detail-modal-con">
+                <span class="modal-close-btn" onclick="closeModal()">X</span>
+                <h1>영화제목</h1>
+                <ul>
+                    <li>개봉일: </li>
+                    <li>상태: </li>
+                    <li>상영시간: </li>
+                    <li>감독: </li>
+                    <li>배우: </li>
+                    <li>출처: </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            저작권&&주소
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

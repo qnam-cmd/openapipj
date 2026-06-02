@@ -1,0 +1,58 @@
+server:
+  port: 8090
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/backprojectdb
+    username: root
+    password: 1234
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  #spring:
+  # 잭슨 직렬화 설정
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    include: open
+
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:admin}
+    password: ${SPRING_RABBITMQ_PASSWORD:1234}
+
+#rabbitmq:
+#  exchange:
+#    name: ec2.exchange
+#  queue:
+#    name: ec2.queue
+#  question:
+#    routing:
+#      key: ec2.routing.#
+
+rabbitmq.queue.name: ec2.queue
+rabbitmq.queue.notification: notification.queue
+rabbitmq.exchange.name: ec2.exchange
+rabbitmq.question.routing.key: ec2.routing.#
+rabbitmq.notification.routing.key: ec2.notification.#
+
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
+#    org.hibernate
+
