@@ -1,6 +1,5 @@
 package org.spring.openapipj.open.movie.dto;
 
-import jakarta.annotation.security.DenyAll;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,8 +19,8 @@ public class MovieDto {
     private String repGenreNm;
     private String repNationNm;
     private String typeNm;
-    private String getCompanyCd;
-    private String getCompanyNm;
+    private String companyCd;
+    private String companyNm;
     private String openDt;
     private String genreAlt;
     private String prdtStatNm;

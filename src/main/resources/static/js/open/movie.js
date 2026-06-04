@@ -80,15 +80,17 @@ const closeModal=()=> {
 
 // 박스오피스
 const boxOfficeFn=()=> {
-    const apiURL=`https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchWeeklyBoxOfficeList.json?key=${key}&targetDt=20260429&weekGb=0`;
+    // const apiURL=`https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchWeeklyBoxOfficeList.json?key=${key}&targetDt=20260301&weekGb=0`;
+    const apiURL = `/api/open/movie/boxOffice/20260301/0`;
     fetch(apiURL)
         .then(res=>res.json())
         .then(rs=>{
             console.log(rs)
+            // 컨트롤러에서 map.put("boxOfficeResult", boxOfficeResult) 했으므로 rs.boxOfficeResult로 접근
             const boxOfficeResult = rs.boxOfficeResult;
             let html2 = ``;
-            boxOfficeResult.weeklyBoxOfficeList.forEach(el=> {
-                html2= `
+            boxOfficeResult.forEach(el=> {
+                html2 += `
                     <tr>
                         <td>${el.rank}</td>
                         <td>${el.movieNm}</td>

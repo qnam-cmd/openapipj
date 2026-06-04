@@ -6,6 +6,9 @@
     <script th:src="@{/js/open/movie.js}" defer></script>
 </head>
 <body>
+
+<div th:replace="~{fragments/common/header :: headerFragment}"></div>
+
 <div class="movie">
     <div class="movie-con">
         <div class="left">
@@ -36,13 +39,13 @@
 
             </tbody>
 
-            <tfoot>
-                <tr>
-                    <td colspan="7">
-                        <div class="pagination"></div>
-                    </td>
-                </tr>
-            </tfoot>
+<!--            <tfoot>-->
+<!--                <tr>-->
+<!--                    <td colspan="7">-->
+<!--                        <div class="pagination"></div>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--            </tfoot>-->
         </table>
         <div class="movie-detail-modal">
             <div class="movie-detail-modal-con">
@@ -59,11 +62,10 @@
             </div>
         </div>
 
-        <div class="footer">
-            저작권&&주소
-        </div>
     </div>
 </div>
+
+<div th:replace="~{fragments/common/footer :: footerFragment}"></div>
 
 </body>
 </html>

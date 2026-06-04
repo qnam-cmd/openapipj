@@ -26,8 +26,10 @@ public class MovieEntity {
     private String repGenreNm;
     private String repNationNm;
     private String typeNm;
-    private String getCompanyCd;
-    private String getCompanyNm;
+    @Column(name = "company_cd")
+    private String companyCd;
+    @Column(name = "company_nm")
+    private String companyNm;
     private String openDt;
     private String genreAlt;
     private String prdtStatNm;

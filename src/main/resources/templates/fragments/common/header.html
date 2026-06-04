@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<div class="header">
+<div class="header" th:fragment="headerFragment">
     <div class="nav">
         <h1 class="logo">LOGO</h1>
         <div class="gnb">
@@ -18,62 +18,6 @@
                 <li><a th:href="@{/api/open/bus}">버스API(Java)</a></li>
             </ul>
         </div>
-
-        <div class="weather">
-            <div class="weather-con">
-
-                <div class="left">
-                    <div class="search">
-                        <select name="search" id="search">
-                            <option value="Seoul">서울</option>
-                            <option value="Busan">부산</option>
-                            <option value="Gwangju">광주</option>
-                            <option value="ChunCheon">춘천</option>
-                        </select>
-                        <button onclick="weatherSearchFn()">검색</button>
-                    </div>
-
-                    <div class="city">
-                        <span class="con"></span>
-                        <span class="description"></span>
-                        <span class="icon"></span>
-                    </div>
-
-                    <div class="temp_min">
-                        <span>최저온도</span>
-                        <span class="con"></span>
-                    </div>
-
-                    <div class="temp_max">
-                        <span>최고온도</span>
-                        <span class="con"></span>
-                    </div>
-
-                    <div class="sunrise">
-                        <span>해뜨는시간</span>
-                        <span class="con"></span>
-                    </div>
-
-                    <div class="sunset">
-                        <span>해지는시간</span>
-                        <span class="con"></span>
-                    </div>
-                </div>
-
-                <div class="right">
-                    <div id="map" style="max-width: 80vh; height: 50vh"></div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="footer">
-            <div class="footer-con">
-                저작권 && 주소
-            </div>
-        </div>
-
-
     </div>
 </div>
 

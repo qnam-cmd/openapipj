@@ -5,30 +5,14 @@
     <title>Index</title>
 </head>
 <body>
-    <div class="header">
-        <div class="nav">
-            <h1 class="logo">LOGO</h1>
-            <div class="gnb">
-                <ul>
-                    <li><a th:href="@{/open/weather}">날씨API</a></li>
-                    <li><a th:href="@{/open/movie}">영화API</a></li>
-                    <li><a th:href="@{/open/bus}">버스API</a></li>
-                    <li><a th:href="@{/api/open/weather}">날씨API(Java)</a></li>
-                    <li><a th:href="@{/api/open/movie}">영화API(Java)</a></li>
-                    <li><a th:href="@{/api/open/bus}">버스API(Java)</a></li>
-                </ul>
-            </div>
+<div th:replace="~{fragments/common/header :: headerFragment}"></div>
 
-            <div class="footer">
-                <div class="footer-con">
-                    저작권 && 주소
-                </div>
-            </div>
-
-
-        </div>
+<div class="index">
+    <div class="index-con">
+        INDEX PAGE
     </div>
+</div>
 
-
+<div th:replace="~{fragments/common/footer :: footerFragment}"></div>
 </body>
 </html>

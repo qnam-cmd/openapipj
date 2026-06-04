@@ -7,6 +7,9 @@
     <script th:src="@{|https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapKey}|}"></script>
 </head>
 <body>
+<div th:replace="~{fragments/common/header :: headerFragment}"></div>
+
+
 <div class="weather">
     <div class="weather-con">
 
@@ -55,11 +58,7 @@
     </div>
 </div>
 
-<div class="footer">
-    <div class="footer-con">
-        저작권 && 주소
-    </div>
-</div>
+<div th:replace="~{fragments/common/footer :: footerFragment}"></div>
 
 
 </body>
