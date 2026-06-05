@@ -18,28 +18,30 @@
                     <li class="scene-list active"><a th:href="@{/api/open/movie}"
                         style="background-color:inherit; color: inherit; text-decoration: none;">영화목록조회</a>
                     </li>
-                    <li class="boxOffice" onclick="boxOfficeFn2()">박스오피스</li>
+                    <li class="boxOffice" onclick="boxOfficeFn()">박스오피스</li>
                     <li>영화사 목록조회</li>
                     <li>영화인 목록조회</li>
                     <li>추가내용</li>
                 </ul>
             </div>
         </div>
+
         <table class="t-table">
             <thead>
-            <tr>
-                <th>제목</th>
-                <th>개봉일</th>
-                <th>장르</th>
-                <th>국적</th>
-                <th>상태</th>
-                <th>영화코드</th>
-                <th>보기</th>
-            </tr>
+                <tr>
+                    <th>제목</th>
+                    <th>개봉일</th>
+                    <th>장르</th>
+                    <th>국적</th>
+                    <th>상태</th>
+                    <th>영화코드</th>
+                    <th>보기</th>
+                </tr>
             </thead>
             <tbody class="scene-content">
 
             </tbody>
+        </table>
 
 <!--            <tfoot>-->
 <!--            <tr>-->
@@ -49,7 +51,6 @@
 <!--            </tr>-->
 <!--            </tfoot>-->
 
-        </table>
 
         <div class="movie-detail-modal">
             <div class="movie-detail-modal-con">

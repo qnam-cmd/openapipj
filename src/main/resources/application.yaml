@@ -9,7 +9,7 @@ spring:
     password: 1234
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
     properties:
@@ -32,15 +32,6 @@ spring:
     port: ${SPRING_RABBITMQ_PORT:5672}
     username: ${SPRING_RABBITMQ_USERNAME:admin}
     password: ${SPRING_RABBITMQ_PASSWORD:1234}
-
-#rabbitmq:
-#  exchange:
-#    name: ec2.exchange
-#  queue:
-#    name: ec2.queue
-#  question:
-#    routing:
-#      key: ec2.routing.#
 
 rabbitmq.queue.name: ec2.queue
 rabbitmq.queue.notification: notification.queue

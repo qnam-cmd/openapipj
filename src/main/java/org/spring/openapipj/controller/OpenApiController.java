@@ -18,9 +18,16 @@ public class OpenApiController {
         model.addAttribute("kakaoMapKey", kakaoMapKey);
         return "/open/weather";
     }
+
     @GetMapping("/movie")
     public String movie() {
         return "/open/movie";
+    }
+
+    @GetMapping("/bus")
+    public String bus(Model model) {
+        model.addAttribute("kakaoMapKey", kakaoMapKey);
+        return "/open/bus";
     }
 
 

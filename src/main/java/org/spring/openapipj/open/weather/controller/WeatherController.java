@@ -1,5 +1,7 @@
 package org.spring.openapipj.open.weather.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.spring.openapipj.open.weather.service.WeatherService;
 import org.spring.openapipj.open.util.OpenApiUtil;
@@ -17,14 +19,18 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/open/weather")
 @RequiredArgsConstructor
+@Tag(name = "Weather API", description = "openWeatherMap API 연동 및 날씨 데이터 처리 API")
 public class WeatherController {
     private final WeatherService weatherService;
 
     @Value("${open.openWeatherMap.serviceKey}")
     private String key;
 
+    @Operation(
+            summary = "도시별 현재 날씨 및 저장",
+            description = "도시명을 입력하면 openWeatherMap API에서 도시의 현재 날씨정보를 조회 후 DB 저장")
     @GetMapping("/search/{q}")
-    public ResponseEntity<?> search(@PathVariable("q")String q) {
+    public ResponseEntity<Map<String ,String >> search(@PathVariable("q")String q) {
         // URL
         String apiURL = "https://api.openweathermap.org/data/2.5/weather?q="+q+"&appid="+key;
 

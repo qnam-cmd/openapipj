@@ -11,9 +11,11 @@ import org.spring.openapipj.open.movie.repository.MovieDetailRepository;
 import org.spring.openapipj.open.movie.repository.MovieRepository;
 import org.spring.openapipj.open.movie.service.MovieDetailService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Transactional
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -76,15 +78,15 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                     .id(movieInfo.get().getId())
                     .movieCd(movieInfo.get().getMovieCd())
                     .movieNm(movieInfo.get().getMovieNm())
-//                    .movieNmEn(movieInfo.get().getMovieNmEn())
                     .openDt(movieInfo.get().getOpenDt())
                     .prdtStatNm(movieInfo.get().getPrdtStatNm())
-//                    .prdtYear(movieInfo.get().getPrdtYear())
                     .showTm(movieInfo.get().getShowTm())
-//                    .typeNm(movieInfo.get().getTypeNm())
                     .source(movieInfo.get().getSource())
                     .actors(movieInfo.get().getActors())
                     .director(movieInfo.get().getDirector())
+//                    .movieNmEn(movieInfo.get().getMovieNmEn())
+//                    .prdtYear(movieInfo.get().getPrdtYear())
+//                    .typeNm(movieInfo.get().getTypeNm())
                     .build();
         }
         return null;

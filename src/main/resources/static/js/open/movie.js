@@ -43,6 +43,7 @@ const sceneDetailFn =(movieCd)=> {
     fetch(apiURL)
         .then(res => res.json())
         .then(rs=> {
+
             document.querySelector('.movie-detail-modal').style.display = 'flex';
 
             const movieInfoResult = rs.movieInfoResult;
@@ -81,13 +82,17 @@ const closeModal=()=> {
 // 박스오피스
 const boxOfficeFn=()=> {
     // const apiURL=`https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchWeeklyBoxOfficeList.json?key=${key}&targetDt=20260301&weekGb=0`;
-    const apiURL = `/api/open/movie/boxOffice/20260301/0`;
+    const apiURL=`https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchWeeklyBoxOfficeList.json?key=${key}&targetDt=20260529&weekGb=0`;
+
+    // const apiURL = `/api/open/movie/boxOffice/20260301/0`;
+
     fetch(apiURL)
         .then(res=>res.json())
         .then(rs=>{
             console.log(rs)
             // 컨트롤러에서 map.put("boxOfficeResult", boxOfficeResult) 했으므로 rs.boxOfficeResult로 접근
             const boxOfficeResult = rs.boxOfficeResult;
+            const headerInfo = boxOfficeResult.length > 0 ? boxOfficeResult[0] : { boxofficeType: '', showRange: '' };
             let html2 = ``;
             boxOfficeResult.forEach(el=> {
                 html2 += `
@@ -105,7 +110,7 @@ const boxOfficeFn=()=> {
             const html1= `
                 <thead>
                     <tr>
-                        <td colspan="7"><span>${boxOfficeResult.boxofficeType}</span> . <span>${boxOfficeResult.showRange}</span></td>    
+                        <td colspan="7"><span>${headerInfo.boxofficeType}</span> . <span>${headerInfo.showRange}</span></td>    
                     </tr>
                 </thead>
                 <tbody class="scene-content">

@@ -1,5 +1,11 @@
 package org.spring.openapipj.open.movie.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.spring.openapipj.open.movie.dto.MovieDto;
@@ -9,12 +15,13 @@ import org.spring.openapipj.open.movie.service.MovieDetailService;
 import org.spring.openapipj.open.movie.service.MovieService;
 import org.spring.openapipj.open.util.OpenApiUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +31,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/open/movie")
 @RequiredArgsConstructor
+@Tag(name = "movie API", description = "kobis openAPI 영화 데이터 조회 및 연동 API")
 public class OpenApiMovieRestController {
 
     private final BoxOfficeService boxOfficeService;
@@ -33,36 +41,72 @@ public class OpenApiMovieRestController {
     @Value("${open.kobis.serviceKey}")
     private String key;
 
+    @Operation(
+            summary = "KOBIS 최신 영화 목록 조회 및 저장",
+            description = "2026년 개봉영화 100편을 조회 및 저장"
+    )
     @GetMapping("/movieList")
-    public ResponseEntity<?> movieList() {
-        String movieSearch = "searchMovieList.json";    // 가져올 내용
-        String itemPerPage = "100"; // 가져올 갯수
-        String openStartDt = "2026"; // 연도
+    public ResponseEntity<Map<String, List<MovieDto>> > movieList() {
+
+        String movieSearch = "searchMovieList.json";  // 가져올 내용
+        String itemPerPage = "100";   // 가져올 갯수
+        String openStartDt = "2026"; // 개봉년
         String apiURL = "http://kobis.or.kr/kobisopenapi/webservice/rest/movie/" + movieSearch + "?key=" + key
-            + "&itemPerPage=" + itemPerPage + "&openStartDt=" + openStartDt;
-        Map<String ,String > requestHeaders = new HashMap<>();
-        requestHeaders.put("Content-Type","application/json");  //JSON데이터
+                + "&itemPerPage=" + itemPerPage + "&openStartDt=" + openStartDt;
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("Content-type", "application/json"); //JSON데이터
         String responseBody = OpenApiUtil.get(apiURL, requestHeaders);
-        List<MovieDto> movieDtos = movieService.insertResponseBody(responseBody);
 
-        System.out.println(movieDtos+"movieDtos");
+        System.out.println(responseBody + " responseBody");
+        List<MovieDto> movieDto=movieService.insertResponseBody(responseBody);
 
-        Map<String ,List<MovieDto>> movie = new HashMap<>();
-        movie.put("movie",movieDtos);
+        System.out.println(movieDto + " movieDto");
+
+        Map<String, List<MovieDto>> movie = new HashMap<>();
+        movie.put("movie", movieDto);
         return ResponseEntity.status(HttpStatus.OK).body(movie);
-
     }
 
+    @Operation(summary = "DB 저장된 영화 목록 페이징 검색", description = "로컬 DB에 저장된 영화 목록을 페이징 및 조건 검색(제목 등)하여 블록 정보와 함께 반환합니다.")
+    @Parameters({
+            @Parameter(name = "page", in = ParameterIn.QUERY, description = "페이지 번호 (0부터 시작)", schema = @Schema(type = "integer", defaultValue = "0")),
+            @Parameter(name = "size", in = ParameterIn.QUERY, description = "한 페이지당 노출할 개수", schema = @Schema(type = "integer", defaultValue = "10")),
+            @Parameter(name = "sort", in = ParameterIn.QUERY, description = "정렬 기준 (예: id,desc)")
+    })
+    @GetMapping("/movieList2")
+    public ResponseEntity<?> movieList2(
+            @Parameter(hidden = true) @PageableDefault(page=0, size=0, sort="id" , direction = Sort.Direction.DESC) Pageable pageable,
+            @Parameter(description = "검색 조건 분류(예: subject)", example = "subject") @RequestParam(name="subject", required = false) String subject,
+            @Parameter(description = "검색 키워드", example = "아바타") @RequestParam(name = "search", required = false) String search) {
+
+        Map<String, Object> map = new HashMap<>();
+        Page<MovieDto> movieDtos = movieService.getMovieList(pageable, subject, search);
+        int nowPage = movieDtos.getNumber();
+        int totalPages = movieDtos.getTotalPages();
+        int blockNum = 3;
+        int startPage = (nowPage / blockNum) * blockNum + 1;
+        int endPage = Math.min(startPage + blockNum - 1, totalPages);
+
+        map.put("movieList", movieDtos);
+        map.put("startPage", startPage);
+        map.put("endPage", endPage);
+        map.put("nowPage", nowPage);
+
+        System.out.println(map + " map");
+        return ResponseEntity.ok(map);
+    }
+
+
     //별도의 테이블에 저장
+    @Operation(summary = "KOBIS 영화 상세 정보 조회 및 저장", description = "영화 고유 코드(movieCd)를 이용해 KOBIS에서 상세 정보를 조회한 뒤 DB에 저장.")
     @GetMapping("/movieDetail/{movieCd}")
-    public ResponseEntity<?> movieDetail(@PathVariable("movieCd") String movieCd) {
+    public ResponseEntity<Map<String, String>> movieDetail(
+            @Parameter(description = "KOBIS 영화 고유 코드",example = "20242153") @PathVariable("movieCd") String movieCd) {
         String apiURL = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieInfo.json?key=" + key
                 + "&movieCd=" + movieCd;
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Content-type", "application/json"); //JSON데이터
-
         String responseBody = OpenApiUtil.get(apiURL, requestHeaders);
-        System.out.println(responseBody+" <<<responseBody");
 
         movieDetailService.movieInfoResultFn(responseBody);
         Map<String, String> movie = new HashMap<>();
@@ -74,8 +118,10 @@ public class OpenApiMovieRestController {
     }
 
     // DB데이터 get -> 기존에  movieList 테이블리스트 중에서 찾기
+    @Operation(summary = "DB에 저장된 영화 상세 정보 조회", description = "로컬 DB에서 영화 고유 코드(movieCd)에 매칭되는 영화 정보를 찾아 조회합니다.")
     @GetMapping("/movieDetailJava/{movieCd}")
-    public ResponseEntity<?> movieDetailJava(@PathVariable("movieCd") String movieCd) {
+    public ResponseEntity<?> movieDetailJava(
+            @Parameter(description = "KOBIS 영화 고유코드", example = "20242153") @PathVariable("movieCd") String movieCd) {
 //        MovieDetailDto movieDetailDto= movieDetailService.movieInfoJava(movieCd);
         MovieDto movieDto= movieService.movieInfoJava(movieCd);
         System.out.println(movieDto+" <<< movieDto");
@@ -84,30 +130,66 @@ public class OpenApiMovieRestController {
         return ResponseEntity.status(HttpStatus.OK).body(movie);
     }
 
-    @GetMapping("/boxOffice/{targetDt}/{weekGb}")
-    public ResponseEntity<?> boxOfficeJava(@PathVariable("targetDt") String targetDt,
-                                           @PathVariable("weekGb")String weekGb) {
-
-        log.info("===========targetDt: " + targetDt + "=============");
-        log.info("===========weekGb: " + weekGb + "=============");
+    @Deprecated
+    @Operation(summary = "주간 박스오피스 테스트 (고정값 방식)", description = "특정 날짜가 하드코딩된 주간 박스오피스 API 임시 테스트용 메서드", deprecated = true)
+    @GetMapping("/boxOffice/{showDate}")
+    public ResponseEntity<?> boxOfficeJava(@PathVariable("showDate") String showDate) {
         String movieSearch = "searchWeeklyBoxOfficeList.json";  // 가져올내용
         String apiURL = "https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/" + movieSearch + "?key=" + key
-                + "&targetDt="+ targetDt + "&weekGb=" + weekGb;
+                + "&targetDt="+ 20250922 + "&weekGb=" + 0;
         Map<String ,String > requestHeaders = new HashMap<>();
         requestHeaders.put("Content-Type","application/json");  // JSON 데이터
 
         String responseBody = OpenApiUtil.get(apiURL, requestHeaders);
-
-        List<BoxOfficeDto> boxOfficeResult = boxOfficeService.insertBoxOfficeBody(responseBody);
-
-        Map<String ,List<BoxOfficeDto>> map = new HashMap<>();
-        map.put("boxOfficeResult", boxOfficeResult);
-        return ResponseEntity.status(HttpStatus.OK).body(map);
+        System.out.println(responseBody);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
+    @Deprecated
+    @Operation(summary = "주간 박스오피스 테스트 (고정값 방식)", description = "특정 날짜가 하드코딩된 주간 박스오피스 API 임시 테스트용 메서드", deprecated = true)
+    @GetMapping("/boxOffice/{targetDt}/{weekGb}")
+    public ResponseEntity<?> boxOfficeJava2(
+            @Parameter(description = "조회 기준일 (YYYYMMDD 형식, 특수문자 자동 제거됨)", example = "20260601") @PathVariable("targetDt") String targetDt,
+            @Parameter(description = "주간/주말/주중 선택 (0:주간, 1:주말, 2:주중)", example = "0") @PathVariable("weekGb") String weekGb) {
+
+        if (targetDt != null) {
+            targetDt = targetDt.replaceAll("[^0-9]", "");
+        }
+        log.info("============ 정제된 targetDt: " + targetDt + " ===================");
+        log.info("============ weekGb: " + weekGb + " ===================");
+
+        if (targetDt == null || targetDt.length() != 8) {
+            Map<String, String> errorMap = new HashMap<>();
+            errorMap.put("error", "올바르지 않은 targetDt 형식입니다. YYYYMMDD 형태여야 합니다. 입력값: " + targetDt);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+        }
+        String movieSearch = "searchWeeklyBoxOfficeList.json";
+        String apiURL = "https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/" + movieSearch + "?key=" + key
+                + "&targetDt=" + targetDt + "&weekGb=" + weekGb;
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("Content-type", "application/json");
+        String responseBody = OpenApiUtil.get(apiURL, requestHeaders);
+
+        try {
+            List<BoxOfficeDto> boxOfficeResult = boxOfficeService.insertBoxOfficeBody(responseBody);
+            Map<String, List<BoxOfficeDto>> map = new HashMap<>();
+            map.put("boxOfficeResult", boxOfficeResult);
+            return ResponseEntity.status(HttpStatus.OK).body(map);
+        } catch (Exception e) {
+            log.error("KOBIS API 응답 파싱 중 오류 발생: ", e);
+            Map<String, String> errorMap = new HashMap<>();
+            errorMap.put("error", "API 데이터를 가져오는데 실패했습니다. (KOBIS 에러 혹은 DTO 매핑 실패)");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMap);
+        }
+    }
+
+
+
     // DB데이터 get
+    @Operation(summary = "DB 저장된 박스오피스 영화 상세 조회", description = "로컬 DB 박스오피스 목록 테이블에서 특정 영화 코드에 해당하는 엔티티 데이터를 가져옵니다.")
     @GetMapping("/boxOfficeDetailJava/{movieCd}")
-    public ResponseEntity<?> boxOfficeDetailJava(@PathVariable("movieCd")String movieCd) {
+    public ResponseEntity<Map<String, BoxOfficeDto>> boxOfficeDetailJava(
+            @Parameter(description = "KOBIS 영화 고유 코드", example = "20242153") @PathVariable("movieCd")String movieCd) {
         BoxOfficeDto boxOfficeDto = boxOfficeService.boxOfficeMovieInfoJava(movieCd);
         Map<String ,BoxOfficeDto> movie = new HashMap<>();
         movie.put("movie", boxOfficeDto);
