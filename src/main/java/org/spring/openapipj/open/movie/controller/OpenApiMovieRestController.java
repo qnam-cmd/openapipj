@@ -45,6 +45,13 @@ public class OpenApiMovieRestController {
             summary = "KOBIS 최신 영화 목록 조회 및 저장",
             description = "2026년 개봉영화 100편을 조회 및 저장"
     )
+
+    // movieList
+    // 외부 API를 가져와 DB에 저장
+    // 브라우저(AJAX)에서 /api/open/movie/movieList로 GET요청
+    // 컨트롤러에서 KOBIS OPEN API 서버로보낼 URL주소 생성
+    // OpenApiUtil.get()사용하여 영화정보를 JSON문자열(ResponseBody)을 받아온다
+    // JSON문자열을 movieService.insertResponseBody(responseBody)로 넘겨주고, 서비스에서 JSON파싱, 로컬DB저장, 자바객체(List<MovieDto>로 반환
     @GetMapping("/movieList")
     public ResponseEntity<Map<String, List<MovieDto>> > movieList() {
 
@@ -67,6 +74,10 @@ public class OpenApiMovieRestController {
         return ResponseEntity.status(HttpStatus.OK).body(movie);
     }
 
+
+    // movieList2
+    // 로컬 DB에 저장된 데이터를 가져와 화면에 보여준다
+    //
     @Operation(summary = "DB 저장된 영화 목록 페이징 검색", description = "로컬 DB에 저장된 영화 목록을 페이징 및 조건 검색(제목 등)하여 블록 정보와 함께 반환합니다.")
     @Parameters({
             @Parameter(name = "page", in = ParameterIn.QUERY, description = "페이지 번호 (0부터 시작)", schema = @Schema(type = "integer", defaultValue = "0")),

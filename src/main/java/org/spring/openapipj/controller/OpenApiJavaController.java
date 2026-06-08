@@ -23,4 +23,8 @@ public class OpenApiJavaController {
     public String movie(Model model) {
         return "/open/api/movie";
     }
+
+    @GetMapping("/bus")
+    public String bus(Model model) { return "/open/api/bus";}
+
 }

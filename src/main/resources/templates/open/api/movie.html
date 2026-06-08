@@ -15,9 +15,10 @@
             <h1>영화진흥회 API</h1>
             <div class="menu">
                 <ul>
-                    <li class="scene-list active"><a th:href="@{/api/open/movie}"
-                        style="background-color:inherit; color: inherit; text-decoration: none;">영화목록조회</a>
+                    <li class="scene-list active" onclick="sceneListFn()" style="cursor:pointer;">
+                        영화목록조회
                     </li>
+                    <li onclick="sceneListFn()">영화사목록조회(paging)</li>
                     <li class="boxOffice" onclick="boxOfficeFn()">박스오피스</li>
                     <li>영화사 목록조회</li>
                     <li>영화인 목록조회</li>
@@ -28,29 +29,39 @@
 
         <table class="t-table">
             <thead>
-                <tr>
-                    <th>제목</th>
-                    <th>개봉일</th>
-                    <th>장르</th>
-                    <th>국적</th>
-                    <th>상태</th>
-                    <th>영화코드</th>
-                    <th>보기</th>
-                </tr>
+            <tr>
+                <th colspan="9">
+                    <form th:action="@{/api/open/movie/search}" method="get">
+                        <select name="subject" id="subject">
+                            <option value="movieNm">영화제목</option>
+                            <option value="genreAlt">장르</option>
+                            <option value="typeNm">타입</option>
+                            <option value="repNationNm">국적</option>
+                            <option value="prdtStatNm">상태</option>
+                            <option value="openDt">개봉일</option>
+                        </select>
+                        <input type="text" name="search" id="search">
+                        <!-- <input type="submit" value="검색" > -->
+                        <input type="button" onclick="searchFn(event)" id="searchBtn" value="검색">
+                    </form>
+                </th>
+            </tr>
+            <tr>
+                <th>ID</th>
+                <th>제목</th>
+                <th>개봉일</th>
+                <th>장르</th>
+                <th>타입</th>
+                <th>국적</th>
+                <th>상태</th>
+                <th>영화코드</th>
+                <th>보기</th>
+            </tr>
             </thead>
             <tbody class="scene-content">
 
             </tbody>
         </table>
-
-<!--            <tfoot>-->
-<!--            <tr>-->
-<!--                <td colspan="7">-->
-<!--                    <div class="pagination"></div>-->
-<!--                </td>-->
-<!--            </tr>-->
-<!--            </tfoot>-->
-
 
         <div class="movie-detail-modal">
             <div class="movie-detail-modal-con">

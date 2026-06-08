@@ -90,11 +90,10 @@ const boxOfficeFn=()=> {
         .then(res=>res.json())
         .then(rs=>{
             console.log(rs)
-            // 컨트롤러에서 map.put("boxOfficeResult", boxOfficeResult) 했으므로 rs.boxOfficeResult로 접근
             const boxOfficeResult = rs.boxOfficeResult;
-            const headerInfo = boxOfficeResult.length > 0 ? boxOfficeResult[0] : { boxofficeType: '', showRange: '' };
+            const weeklyList = boxOfficeResult.weeklyBoxOfficeList;
             let html2 = ``;
-            boxOfficeResult.forEach(el=> {
+            weeklyList.forEach(el=> {
                 html2 += `
                     <tr>
                         <td>${el.rank}</td>
@@ -110,7 +109,16 @@ const boxOfficeFn=()=> {
             const html1= `
                 <thead>
                     <tr>
-                        <td colspan="7"><span>${headerInfo.boxofficeType}</span> . <span>${headerInfo.showRange}</span></td>    
+                        <td colspan="7"><span>${boxOfficeResult.boxofficeType}</span> . <span>${boxOfficeResult.showRange}</span></td>    
+                    </tr>
+                    <tr>
+                        <th>순위</th>
+                        <th>제목</th>
+                        <th>개봉일</th>
+                        <th>누적관객수</th>
+                        <th>누적매출액</th>
+                        <th>영화코드</th>
+                        <th>보기</th>
                     </tr>
                 </thead>
                 <tbody class="scene-content">
@@ -122,6 +130,28 @@ const boxOfficeFn=()=> {
         })
         .catch(err=>console.log(err));
 }
+
+
+// 이벤트위임 -> 리스트 부모객체에 이벤트를 한번만
+const ul = document.querySelector('.menu > ul');
+
+ul.addEventListener('click', function (e) {
+    // closest() 함수
+    // 주어진 CSS 선택자와 일치하는 가장 가까운(closest) 상위 조상 요소를 찾아서 반환
+    // 이때, 해당 요소 자신도 검사 대상에 포함
+    // 일치하는 요소가 없으면 null을 반환
+    // 실제 클릭된 요소가 li가 아닐 경우 li를 찾아야 함
+    const clickedLi = e.target.closest('li');
+
+    // li가 아닌 영역을 클릭했을 경우 무시
+    if (!clickedLi || !ul.contains(clickedLi)) return;
+
+    // 모든 li에서 active 제거
+    Array.from(ul.children).forEach((el) => el.classList.remove('active'));
+
+    // 클릭된 li에 active 추가
+    clickedLi.classList.add('active');
+});
 
 
 (()=>{
