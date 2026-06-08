@@ -9,7 +9,7 @@ import java.net.URLEncoder;
 
 public class OpenApiBusUtil {
     private static final String BUS_ROUTE_LIST_URL = "http://ws.bus.go.kr/api/rest/busRouteInfo/getBusRouteList";
-    private static final String  STATION_BY_ROUTE_URL = "http://ws.bus.go.kr/api/rest/busRouteInfo/getStationByRoute";
+    private static final String STATION_BY_ROUTE_URL = "http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute";
 
     public static String getBusList(String serviceKey, String searchVal) throws IOException {
         StringBuilder urlBuilder = new StringBuilder(BUS_ROUTE_LIST_URL); /*URL*/
@@ -49,17 +49,18 @@ public class OpenApiBusUtil {
 
 
     public static String getStationList(String serviceKey, String busRouteId) throws IOException {
-        // URL
-        StringBuilder urlBuilder = new StringBuilder(STATION_BY_ROUTE_URL); /*URL*/
-        // ServiceKey
-        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + serviceKey); /*Service Key*/
-        // **
-        urlBuilder.append("&" + URLEncoder.encode("busRouteId","UTF-8") + "=" + URLEncoder.encode(busRouteId, "UTF-8")); /*노선ID*/
-        // 반환 타입
+        // 1. URL 직접 입력
+        String url = "http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute";
+
+        // 2. 파라미터 구성 (URLEncoder 없이 직접 연결 - 서비스키에 특수문자가 있다면 예외)
+        StringBuilder urlBuilder = new StringBuilder(url);
+        urlBuilder.append("?ServiceKey=" + serviceKey);
+        urlBuilder.append("&busRouteId=" + busRouteId);
         urlBuilder.append("&resultType=json");
 
-
+        System.out.println("최종 호출 URL 확인: " + urlBuilder.toString());
         return getBusResultData(urlBuilder.toString());
+    }
 
 //        URL url = new URL(urlBuilder.toString());
 //        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -82,7 +83,6 @@ public class OpenApiBusUtil {
 //        conn.disconnect();
 //        System.out.println(sb.toString());
 //        return sb.toString();
-    }
 
 
     public static String getBusResultData(String requestURL) throws IOException{

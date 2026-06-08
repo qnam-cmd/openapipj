@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Bus</title>
+    <script th:src="@{|https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapKey}&autoload=false|}"></script>
     <script th:src="@{/js/open/api/bus.js}" defer></script>
-    <script th:src="@{|https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapKey}|}"></script>
 </head>
 <body>
 <div th:replace="~{fragments/common/header :: headerFragment}"></div>

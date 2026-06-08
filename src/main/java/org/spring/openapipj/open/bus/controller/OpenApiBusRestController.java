@@ -46,18 +46,31 @@ public class OpenApiBusRestController {
         return ResponseEntity.status(HttpStatus.OK).body(busMap);
     }
 
+    // 상세목록 DB저장 및 조회
     @GetMapping("/stationList")
-    public ResponseEntity<?> stationList(@RequestParam(name = "busRouteId") String busRouteId) throws IOException {
-        // 1. 공공데이터 API호출(정류장 목록용 유틸 메서드 호출)
-        String stationResult = OpenApiBusUtil.getStationList(key, busRouteId);
-        log.info("== 외부 API정류장 데이터 수신 완료 ==");
-        // 2. 파싱 및 DB 저장
-        busStationService.insertBusStations(stationResult);
-        // 3. DB에서 정류장목록 가져오기
-        List<BusStationDto> stationList = busStationService.busStationListFn(busRouteId);
-        // 반환
-        Map<String ,Object> resultMap = new HashMap<>();
-        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    public ResponseEntity<?> stationList(@RequestParam(name = "busRouteId") String busRouteId) {
+        log.info(">>>> stationList 컨트롤러 호출됨! 전달된 busRouteId: " + busRouteId);
+        try {
+            // 1. 공공데이터 API 호출
+            String responseBody = OpenApiBusUtil.getStationList(key, busRouteId);
+            log.info("정류장 API 응답 수신 완료");
+
+            // 2. 서비스에 JSON 문자열을 넘겨주어 DB에 저장 (이 부분이 누락되어 있었습니다!)
+            busStationService.insertBusStations(responseBody);
+
+            // 3. DB에 저장된 정류장 목록 조회 후 반환
+            List<BusStationDto> stationList = busStationService.busStationListFn(busRouteId);
+
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("stationList", stationList);
+            return ResponseEntity.ok(resultMap);
+
+        } catch (Exception e) {
+            log.error("정류장 정보 처리 중 오류 발생: ", e);
+            Map<String, String> errorMap = new HashMap<>();
+            errorMap.put("error", "정류장 데이터를 불러오거나 저장하는데 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMap);
+        }
     }
 
 }

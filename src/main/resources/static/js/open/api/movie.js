@@ -52,8 +52,8 @@ const sceneListFn=()=>{
 
 
 const sceneDetailFn = (movieCd) => {
-    const apiURL = `/api/open/movie/movieDetailJava/${movieCd}`;
-    // const apiURL = `/api/open/movie/movieDetail/${movieCd}`;
+    // const apiURL = `/api/open/movie/movieDetailJava/${movieCd}`;
+    const apiURL = `/api/open/movie/movieDetail/${movieCd}`;
 //
     fetch(apiURL)
         .then(res => res.json())
@@ -65,7 +65,7 @@ const sceneDetailFn = (movieCd) => {
             const movieStr = rs.movie;
             const movie = movieStr;
             const movieInfoResult = movie;
-            const movieInfo = movieInfoResult;
+            const movieInfo = JSON.parse(rs.movie).movieInfoResult.movieInfo;
 
             // 영화 정보 추출
             const movieId = movieInfo.id;  //삭제시
@@ -73,8 +73,8 @@ const sceneDetailFn = (movieCd) => {
             const movieCdVal = movieInfo.movieCd;
             const openDt = movieInfo.openDt;
             const prdtStatNm = movieInfo.prdtStatNm;
-            const repNationNm = movieInfo.repNationNm;
-            const genreAlt = movieInfo.genreAlt;
+            const nations = movieInfo.nations.map(n => n.nationNm).join(', ');
+            const genres = movieInfo.genres.map(g => g.genreNm).join(', ');
             const typeNm = movieInfo.typeNm;
             const movieNmEn = movieInfo.movieNmEn;
             const source = movieInfo.source
@@ -84,8 +84,8 @@ const sceneDetailFn = (movieCd) => {
                 <ul>
                     <li>개봉일: ${openDt}</li>
                     <li>상태: ${prdtStatNm}</li>
-                    <li>국적: ${repNationNm}</li>
-                    <li>등급: ${genreAlt}</li>
+                    <li>국적: ${nations}</li>
+                    <li>등급: ${genres}</li>
                     <li>장르: ${typeNm}</li>
                     <li>영문: ${movieNmEn}</li>
                     <li><button>삭제</button></li>

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @Slf4j
@@ -38,7 +39,15 @@ public class MovieDetailServiceImpl implements MovieDetailService {
             String movieNm = movieInfo.getMovieNm();
 
             // 영화명이 이미 존재하는지 확인
-            Optional<MovieDetailEntity> optionalMovieDetailEntity = movieDetailRepository.findByMovieNm(movieNm);
+            Optional<MovieDetailEntity> optionalMovieDetailEntity = movieDetailRepository.findByMovieCd(movieInfo.getMovieCd());
+
+
+            // 1. 감독과 배우 안전하게 추출 (Null 방지)
+            String directorStr = (movieInfo.getDirectors() != null && !movieInfo.getDirectors().isEmpty())
+                    ? movieInfo.getDirectors().get(0).getPeopleNm() : "정보없음";
+
+            String actorsStr = (movieInfo.getActors() != null && !movieInfo.getActors().isEmpty())
+                    ? movieInfo.getActors().stream().map(a -> a.getPeopleNm()).collect(Collectors.joining(", ")) : "정보없음";
 
 //            if (optionalMovieDetailEntity.isEmpty()) {
             if (!optionalMovieDetailEntity.isPresent()) {
@@ -53,6 +62,8 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                         .showTm(movieInfo.getShowTm())
                         .typeNm(movieInfo.getTypeNm())
                         .source(result.getMovieInfoResult().getSource())
+                        .director(directorStr)
+                        .actors(actorsStr)
                         .build();
 
                 movieDetailRepository.save(newMovie);

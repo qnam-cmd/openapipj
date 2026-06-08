@@ -1,10 +1,12 @@
 package org.spring.openapipj.open.movie.dto.movie;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MovieInfo {
 
   private List<Actor> actors;

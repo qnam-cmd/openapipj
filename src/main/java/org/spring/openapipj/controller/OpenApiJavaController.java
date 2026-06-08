@@ -25,6 +25,9 @@ public class OpenApiJavaController {
     }
 
     @GetMapping("/bus")
-    public String bus(Model model) { return "/open/api/bus";}
+    public String bus(Model model) {
+        model.addAttribute("kakaoMapKey", kakaoMapKey);
+        return "/open/api/bus";
+    }
 
 }
